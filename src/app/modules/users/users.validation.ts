@@ -23,6 +23,34 @@ const createUserZodValidation = z.object({
   }),
 });
 
+const updateUserZodValidation = z.object({
+  body: z.object({
+    phoneNumber: z.string().optional(),
+    name: z
+      .object({
+        firstName: z.string().optional(),
+        middleName: z.string().optional(),
+        lastName: z.string().optional(),
+      })
+      .optional(),
+    role: z.enum(['seller', 'buyer']).optional(),
+    address: z.string().optional(),
+    budget: z
+      .number()
+      .min(0, {
+        message: 'Budget must be a positive number',
+      })
+      .optional(),
+    income: z
+      .number()
+      .min(0, {
+        message: 'Income must be a positive number',
+      })
+      .optional(),
+  }),
+});
+
 export const UserZodValidation = {
   createUserZodValidation,
+  updateUserZodValidation,
 };

@@ -5,6 +5,7 @@ import { ISeller } from '../seller/seller.interface';
 import { Seller } from '../seller/seller.model';
 import { User } from './users.model';
 import { Buyer } from '../buyer/buyer.model';
+import { IUser } from './users.interface';
 
 const createSeller = async (payload: ISeller) => {
   let result;
@@ -65,7 +66,74 @@ const createBuyer = async (payload: ISeller) => {
   return result;
 };
 
+const getAllUsers = async (): Promise<IUser[] | null> => {
+  const result = await User.find()
+    .populate({ path: 'sellerId', model: 'Seller' }) // Populating sellerId if it exists
+    .populate({ path: 'buyerId', model: 'Buyer' }); // Populating buyerId if it exists;
+  return result;
+};
+
+const getSingleUser = async (id: string): Promise<IUser | null> => {
+  const result = await User.findById(id)
+    .populate({ path: 'sellerId', model: 'Seller' })
+    .populate({ path: 'buyerId', model: 'Buyer' });
+  return result;
+};
+
+const updateUser = async (
+  id: string,
+  payload: Partial<IUser>
+): Promise<IUser | null> => {
+  const { ...userData } = payload;
+  const updatedUserData: Partial<IUser> = { ...userData };
+
+  const findData = await User.findById(id);
+  if (!findData) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User not found');
+  }
+
+  const result = await User.findOneAndUpdate({ _id: id }, updatedUserData, {
+    new: true,
+  })
+    .populate({ path: 'sellerId', model: 'Seller' })
+    .populate({ path: 'buyerId', model: 'Buyer' });
+  if (result?.sellerId) {
+    await Seller.findOneAndUpdate({ _id: result?.sellerId }, updatedUserData, {
+      new: true,
+    });
+  } else if (result?.buyerId) {
+    await Buyer.findOneAndUpdate({ _id: result?.buyerId }, updatedUserData, {
+      new: true,
+    });
+  }
+
+  console.log({ ...userData }, findData, result);
+  return result;
+};
+const deleteUser = async (id: string) => {
+  const findData = await User.findById(id);
+  if (!findData) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'User not found');
+  }
+
+  const deleteUser = await User.deleteOne({ _id: id })
+    .populate({ path: 'sellerId', model: 'Seller' })
+    .populate({ path: 'buyerId', model: 'Buyer' });
+
+  if (findData?.sellerId) {
+    await Seller.deleteOne({ _id: findData?.sellerId });
+  } else if (findData?.buyerId) {
+    await Buyer.deleteOne({ _id: findData?.buyerId });
+  }
+
+  return deleteUser;
+};
+
 export const UserService = {
   createSeller,
   createBuyer,
+  getAllUsers,
+  getSingleUser,
+  updateUser,
+  deleteUser,
 };
