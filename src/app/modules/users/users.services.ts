@@ -6,6 +6,7 @@ import { Seller } from '../seller/seller.model';
 import { User } from './users.model';
 import { Buyer } from '../buyer/buyer.model';
 import { IUser } from './users.interface';
+import { Cow } from '../cow/cow.model';
 
 const createSeller = async (payload: ISeller) => {
   let result;
@@ -122,6 +123,7 @@ const deleteUser = async (id: string) => {
 
   if (findData?.sellerId) {
     await Seller.deleteOne({ _id: findData?.sellerId });
+    await Cow.deleteOne({ seller: findData?.sellerId });
   } else if (findData?.buyerId) {
     await Buyer.deleteOne({ _id: findData?.buyerId });
   }

@@ -19,6 +19,21 @@ const createCowZodValidation = z.object({
   }),
 });
 
+const updateCowZodValidation = z.object({
+  body: z.object({
+    name: z.string().optional(),
+    age: z.number().min(0, 'Age must be a positive number').optional(),
+    price: z.number().min(0, 'Price must be a positive number').optional(),
+    location: z.enum([...locations] as [string]).optional(),
+    breed: z.enum([...breed] as [string]).optional(),
+    weight: z.number().min(0, 'Weight must be a positive number').optional(),
+    label: z.enum(['for sale', 'sold out']).default('for sale').optional(),
+    category: z.enum(['Dairy', 'Beef', 'Dual Purpose']).optional(),
+    seller: z.string().optional(),
+  }),
+});
+
 export const CowZodValidation = {
   createCowZodValidation,
+  updateCowZodValidation,
 };
