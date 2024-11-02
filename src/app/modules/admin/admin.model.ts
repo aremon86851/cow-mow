@@ -1,10 +1,10 @@
 import { model, Schema } from 'mongoose';
-import { IBuyer } from './buyer.interface';
+import { IAdmin } from './admin.interface';
 
-const buyerSchema = new Schema<IBuyer>(
+const adminSchema = new Schema<IAdmin>(
   {
     phoneNumber: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String, required: true, select: 0 },
     role: { type: String, required: true },
     name: {
       firstName: { type: String, required: true },
@@ -12,7 +12,6 @@ const buyerSchema = new Schema<IBuyer>(
       lastName: { type: String, required: true },
     },
     address: { type: String, required: true },
-    budget: { type: Number, required: true },
   },
   {
     timestamps: true,
@@ -22,4 +21,4 @@ const buyerSchema = new Schema<IBuyer>(
   }
 );
 
-export const Buyer = model<IBuyer>('Buyer', buyerSchema);
+export const Admin = model<IAdmin>('Admin', adminSchema);

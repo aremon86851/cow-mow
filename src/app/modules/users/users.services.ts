@@ -7,6 +7,8 @@ import { User } from './users.model';
 import { Buyer } from '../buyer/buyer.model';
 import { IUser } from './users.interface';
 import { Cow } from '../cow/cow.model';
+import { IAdmin } from '../admin/admin.interface';
+import { Admin } from '../admin/admin.model';
 
 const createSeller = async (payload: ISeller) => {
   let result;
@@ -65,6 +67,35 @@ const createBuyer = async (payload: ISeller) => {
     console.log(error);
   }
   return result;
+};
+const createAdmin = async (payload: IAdmin): Promise<IUser | undefined> => {
+  let result;
+  const session = await mongoose.startSession();
+  try {
+    await session.startTransaction();
+    const admin = await Admin.create([payload], { session });
+    console.log(payload);
+    if (!admin.length) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Admin not created');
+    }
+    const userInfo = {
+      adminId: admin[0]?._id,
+      phoneNumber: admin[0].phoneNumber,
+      password: admin[0].password,
+      role: admin[0].role,
+    };
+    result = await User.create([userInfo], { session });
+    if (!result.length) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'User not created');
+    }
+    await session.commitTransaction();
+    await session.endSession();
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+    console.log(error);
+  }
+  return result?.[0];
 };
 
 const getAllUsers = async (): Promise<IUser[] | null> => {
@@ -138,4 +169,5 @@ export const UserService = {
   getSingleUser,
   updateUser,
   deleteUser,
+  createAdmin,
 };

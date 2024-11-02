@@ -7,6 +7,8 @@ import httpStatus from 'http-status';
 import { Cow } from '../cow/cow.model';
 import { Buyer } from '../buyer/buyer.model';
 import { Seller } from '../seller/seller.model';
+import { User } from '../users/users.model';
+import { getOrdersByBuyer, getOrdersBySeller } from './orders.constant';
 
 const createOrder = async (payload: IOrder): Promise<IOrder | undefined> => {
   const findBuyer: any = await Buyer.findById({ _id: payload.buyer });
@@ -36,7 +38,7 @@ const createOrder = async (payload: IOrder): Promise<IOrder | undefined> => {
     );
     await Seller.updateOne(
       { _id: findCow.seller },
-      { income: findCow.price + findSeller.income },
+      { income: Number(findCow.price + findSeller?.income) },
       { session }
     );
 
@@ -61,7 +63,21 @@ const getSingleOrder = async (id: string): Promise<IOrder | null> => {
   return result;
 };
 
+const getOrders = async (userId: string): Promise<IOrder[] | null> => {
+  const result: any = await User.findById({ _id: userId });
+  if (!result) throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
+  let orders = null;
+  console.log(result);
+  if (result.role === 'buyer') {
+    orders = await getOrdersByBuyer(result?.buyerId);
+  } else if (result.role === 'seller') {
+    orders = await getOrdersBySeller(result?.sellerId);
+  }
+  return orders;
+};
+
 export const OrderService = {
   createOrder,
   getSingleOrder,
+  getOrders,
 };

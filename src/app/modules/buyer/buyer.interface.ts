@@ -11,7 +11,6 @@ export type IBuyer = {
   };
   address: string;
   budget: number;
-  income: number;
 };
 
 export type BuyerModel = Model<IBuyer, Record<string, unknown>>;

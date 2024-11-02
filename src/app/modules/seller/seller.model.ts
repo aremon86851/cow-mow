@@ -3,7 +3,7 @@ import { ISeller } from './seller.interface';
 
 const sellerSchema = new Schema<ISeller>(
   {
-    phoneNumber: { type: String, required: true },
+    phoneNumber: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, required: true },
     name: {
@@ -11,8 +11,8 @@ const sellerSchema = new Schema<ISeller>(
       middleName: { type: String },
       lastName: { type: String, required: true },
     },
+    address: { type: String, required: true },
     income: { type: Number, required: true },
-    budget: { type: Number, required: true },
   },
   {
     timestamps: true,

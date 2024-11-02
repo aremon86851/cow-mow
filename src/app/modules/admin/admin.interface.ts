@@ -1,16 +1,15 @@
 import { Model } from 'mongoose';
 
-export type ISeller = {
+export type IAdmin = {
   phoneNumber: string;
   password: string;
-  role: 'seller' | 'buyer';
+  role: 'admin';
   name: {
     firstName: string;
     middleName?: string;
     lastName: string;
   };
   address: string;
-  income: number;
 };
 
-export type SellerModel = Model<ISeller, Record<string, unknown>>;
+export type AdminModel = Model<IAdmin, Record<string, unknown>>;

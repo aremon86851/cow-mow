@@ -25,6 +25,17 @@ const createBuyer = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+const createAdmin = catchAsync(async (req: Request, res: Response) => {
+  const payload = req.body;
+  const result = await UserService.createAdmin(payload);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Admin created successfully',
+    data: result,
+  });
+});
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.getAllUsers();
   sendResponse(res, {
@@ -73,4 +84,5 @@ export default {
   getSingleUser,
   updateUser,
   deleteUser,
+  createAdmin,
 };
