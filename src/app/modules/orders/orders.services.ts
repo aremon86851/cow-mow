@@ -67,7 +67,6 @@ const getOrders = async (userId: string): Promise<IOrder[] | null> => {
   const result: any = await User.findById({ _id: userId });
   if (!result) throw new ApiError(httpStatus.NOT_FOUND, 'Order not found');
   let orders = null;
-  console.log(result);
   if (result.role === 'buyer') {
     orders = await getOrdersByBuyer(result?.buyerId);
   } else if (result.role === 'seller') {

@@ -142,6 +142,7 @@ const updateUser = async (
   console.log({ ...userData }, findData, result);
   return result;
 };
+
 const deleteUser = async (id: string) => {
   const findData = await User.findById(id);
   if (!findData) {

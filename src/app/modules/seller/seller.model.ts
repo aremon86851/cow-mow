@@ -4,7 +4,7 @@ import { ISeller } from './seller.interface';
 const sellerSchema = new Schema<ISeller>(
   {
     phoneNumber: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String, required: true, select: 0 },
     role: { type: String, required: true },
     name: {
       firstName: { type: String, required: true },

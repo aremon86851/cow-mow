@@ -4,7 +4,7 @@ import { IBuyer } from './buyer.interface';
 const buyerSchema = new Schema<IBuyer>(
   {
     phoneNumber: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String, required: true, select: 0 },
     role: { type: String, required: true },
     name: {
       firstName: { type: String, required: true },
